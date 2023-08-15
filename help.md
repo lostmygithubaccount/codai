@@ -1,10 +1,10 @@
-I am codai, a conversational AI assistant. I can help you to read, write, and generate contextual content.
+I am codai, a coding AI assistant.
 
 Commands:
 
     - /ls: list files in the current directory
-    - /read <filename>: read a file
-    - /write: write a markdown file
-    - /write-python: write a python file
+    - /read {filename}: read a file
+    - /write {filename}: write a file (.md or .py)
     - /image: generate an image summary of the last message
     - /exit, /quit, or /q: exit the program
+

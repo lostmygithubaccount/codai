@@ -19,9 +19,15 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 try:
     config = toml.load("config.toml")["chat"]
 except:
-    config = {model: "gpt-3.5-turbo-16k"} 
+    config = {model: "gpt-3.5-turbo-16k"}
 
-default_user = {"user": {"name": "user", "bio": "you know nothing about me", "style": "bold magenta"}}
+default_user = {
+    "user": {
+        "name": "user",
+        "bio": "you know nothing about me",
+        "style": "bold magenta",
+    }
+}
 if "user" not in config:
     config.update(default_user)
 
@@ -53,6 +59,7 @@ with open("help.md", "r") as f:
 
 system += f"Help message: \n\n{help_message}"
 
+
 def codai(end="\n"):
     console.print("codai", style="blink bold violet", end="")
     console.print(": ", style="bold white", end=end)
@@ -76,7 +83,9 @@ def chat_run():
 
     while True:
         user_str = config["user"]["name"]
-        console.print(f"(codai) {user_str}@dkdc.ai", style=config["user"]["style"], end="")
+        console.print(
+            f"(codai) {user_str}@dkdc.ai", style=config["user"]["style"], end=""
+        )
         console.print(" % ", style="bold white", end="")
         user_input = console.input()
         codai()
@@ -107,45 +116,41 @@ def chat_run():
                 except FileNotFoundError:
                     log.info("File not found.")
 
-            elif user_input.lower().strip() == "/write":
-                content = "\n".join([message["content"] for message in messages])
-                # only write the last message
-                filename = "temp.md"
-
-                # Find the latest code block from the assistant's responses
-                for message in messages[::-1]:
-                    content = message["content"]
-                    break
-
-                with open(filename, "w") as f:
-                    f.write(content)
-                log.info(f"Successfully wrote conversation to '{filename}'.")
-
-            elif user_input.lower().startswith("/write-"):
+            elif user_input.lower().startswith("/write"):
                 try:
-                    command = user_input.split("-")[1]
+                    # Extract the filename and extension from the user input
+                    file_parts = user_input.split(" ")[1].rsplit(".", 1)
+                    filename = file_parts[0].strip()
+                    extension = file_parts[1].strip() if len(file_parts) > 1 else None
 
-                    if command == "python":
-                        filename = "temp.py"
-                        code = ""
+                    if extension == "py":
+                        # Find the last code block in the messages
+                        code_blocks = extract_code_blocks(messages[-1]["content"])
+                        if code_blocks:
+                            code_block = code_blocks[-1]  # Take the last code block
 
-                        # Find the latest code block from the assistant's responses
-                        for message in messages[::-1]:
-                            code_blocks = extract_code_blocks(message["content"])
-                            if message["role"] == "assistant":
-                                for code_block in code_blocks:
-                                    code += code_block + "\n"
-                                break
+                            # Write the code block to the specified file
+                            with open(filename + ".py", "w") as f:
+                                f.write(code_block)
 
-                        with open(filename, "w") as f:
-                            f.write(code)
-                        log.info(f"Successfully wrote code to '{filename}'.")
+                            log.info(
+                                f"Successfully wrote code block to '{filename}.py'."
+                            )
+                        else:
+                            log.info("No code block found in the last message.")
+                    elif extension == "md":
+                        # Write the entire last message to the specified file
+                        with open(filename + ".md", "w") as f:
+                            f.write(messages[-1]["content"])
+
+                        log.info(f"Successfully wrote last message to '{filename}.md'.")
+                    else:
+                        log.info(
+                            "Invalid or unsupported file extension. Please use '.py' or '.md'."
+                        )
 
                 except IndexError:
-                    log.info(
-                        "Please provide a command (e.g., 'python') for the /write command."
-                    )
-
+                    log.info("Please specify a filename.")
                 except Exception as e:
                     log.error(f"Error while processing the /write command: {str(e)}")
 
