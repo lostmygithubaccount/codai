@@ -1,4 +1,5 @@
 # python
+black
 build
 twine
 python-dotenv

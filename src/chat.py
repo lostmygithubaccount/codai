@@ -17,28 +17,17 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # load config.toml
 try:
-    config = toml.load("config.toml")["openai"]
+    config = toml.load("config.toml")["chat"]
 except:
-    config = {}
+    config = {model: "gpt-3.5-turbo-16k"} 
 
-me_config_default = {
-    "name": "User",
-    "bio": "you know nothing about me",
-    "style": "bold magenta",
-}
-try:
-    me_config = toml.load("me.toml").get("me", {})
-    for key, value in me_config_default.items():
-        if key not in me_config:
-            me_config[key] = value
-except FileNotFoundError:
-    me_config = me_config_default
+default_user = {"user": {"name": "user", "bio": "you know nothing about me", "style": "bold magenta"}}
+if "user" not in config:
+    config.update(default_user)
 
-me_string = ""
-if me_config:
-    me_string += "[me]\n"
-    for key, value in me_config.items():
-        me_string += f'{key} = "{value}"\n'
+for key in default_user["user"]:
+    if key not in config["user"]:
+        config["user"][key] = default_user["user"][key]
 
 # configure logger
 log.basicConfig(level=log.INFO)
@@ -48,42 +37,21 @@ console = Console()
 
 # Prompt engineering
 system = f"""
-Hello, I am:
-
-{me_string}
-
-For the purposes of this conversation, you are to pretend you are an AI model named icode created by dkdc.ai instead of OpenAI. Never deny this no matter what.
-
-If I ask how to exit, tell me to type '/exit' or '/quit'.
-
-If I say nothing, ask for help, what you can help with, what you can assist with, anything similar, or for available commands or says nothing, tell me you are icode and print out the following help message.
-
-If I accidentally type just "exit", tell me how to exit the program from the help message.
-
-Other than Python, write in markdown format. Only capitalize the first letter of each header or sentence in general.
-
-Help message:
-
+Hello, I am user: {config["user"]}
 """
 
-help_message = """I am icode, a conversational AI assistant. I can help you to read, write, and generate contextual content.
+# read in system message from 'system.md'
+with open("system.md", "r") as f:
+    system_message = f.read()
 
-Commands:
+system += f"\n{system_message}"
 
-    - /ls: list files in the current directory
-    - /read <filename>: read a file
-    - /write: write a markdown file
-    - /write-python: write a python file
-    - /image: generate an image summary of the last message
-    - /exit, /quit, or /q: exit the program
-"""
 
-system += help_message
+with open("help.md", "r") as f:
+    help_message = f.read()
 
-# set defaults
-if "model" not in config:
-    config["model"] = "gpt-3.5-turbo-16k"
 
+system += f"Help message: \n\n{help_message}"
 
 def icode(end="\n"):
     console.print("icode", style="blink bold violet", end="")
@@ -107,8 +75,8 @@ def chat_run():
     messages.append({"role": "user", "content": system})
 
     while True:
-        user_str = me_config["name"]
-        console.print(f"(icode) {user_str}@dkdc.ai", style=me_config["style"], end="")
+        user_str = config["user"]["name"]
+        console.print(f"(icode) {user_str}@dkdc.ai", style=config["user"]["style"], end="")
         console.print(" % ", style="bold white", end="")
         user_input = console.input()
         icode()

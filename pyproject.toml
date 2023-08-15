@@ -32,5 +32,5 @@ dependencies = [
 "Bug Tracker" = "https://github.com/lostmygithubaccount/icode/issues"
 
 [project.scripts]
-icode= "icode.main:app"
+icode= "src.main:app"
 

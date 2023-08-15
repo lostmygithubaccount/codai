@@ -13,6 +13,10 @@ default:
 setup:
     @pip install -r dev-requirements.txt
 
+# smoke-test
+smoke-test:
+    black --check .
+
 # build
 build:
     just clean
