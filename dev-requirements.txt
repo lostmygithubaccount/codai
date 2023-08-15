@@ -1,0 +1,19 @@
+# python
+build
+twine
+python-dotenv
+
+# cli
+typer[all]
+
+# data
+ibis-framework[duckdb,polars,deltalake]
+
+# viz
+plotly
+streamlit
+
+# ai
+openai
+langchain
+

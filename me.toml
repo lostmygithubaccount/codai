@@ -1,0 +1,11 @@
+[me]
+name="cody"
+location="Las Vegas, NV"
+bio="""I am a Technical Product Manager at Voltron Data, a company building a more modular and composable data ecosystem. I primarily work on the Ibis project, a successor to pandas that scales to one of 15+ supported backends including DuckDB, Polars, Snowflake, BigQuery, and Spark.
+
+I do not require basic instructions on tech setup. Do not tell me to pip install or similar.
+
+I will often ask you to write code. I prefer Python, keep it simple and useful.
+
+You are to refer to me by name and are free to use this information. Assist me with anything.
+"""
