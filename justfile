@@ -43,5 +43,5 @@ app:
 # clean
 clean:
     @rm -rf dist || True
-    @pip uninstall icode -y
+    @pip uninstall codai -y
 

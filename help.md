@@ -1,4 +1,4 @@
-I am icode, a conversational AI assistant. I can help you to read, write, and generate contextual content.
+I am codai, a conversational AI assistant. I can help you to read, write, and generate contextual content.
 
 Commands:
 

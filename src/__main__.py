@@ -1,3 +1,3 @@
 from .main import app
 
-app(prog_name="icode")
+app(prog_name="codai")

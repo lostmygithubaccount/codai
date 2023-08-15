@@ -53,8 +53,8 @@ with open("help.md", "r") as f:
 
 system += f"Help message: \n\n{help_message}"
 
-def icode(end="\n"):
-    console.print("icode", style="blink bold violet", end="")
+def codai(end="\n"):
+    console.print("codai", style="blink bold violet", end="")
     console.print(": ", style="bold white", end=end)
 
 
@@ -67,7 +67,7 @@ def extract_code_blocks(text):
 
 # chat
 def chat_run():
-    icode(end="")
+    codai(end="")
     console.print(help_message)
 
     # Chat history
@@ -76,10 +76,10 @@ def chat_run():
 
     while True:
         user_str = config["user"]["name"]
-        console.print(f"(icode) {user_str}@dkdc.ai", style=config["user"]["style"], end="")
+        console.print(f"(codai) {user_str}@dkdc.ai", style=config["user"]["style"], end="")
         console.print(" % ", style="bold white", end="")
         user_input = console.input()
-        icode()
+        codai()
 
         if user_input.lower().strip() in ["/exit", "/quit", "/q"]:
             log.info("Exiting...")

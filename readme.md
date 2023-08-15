@@ -1,4 +1,4 @@
-# icode
+# codai
 
-AI coding assistant.
+AI coding assistant. Pronounced "code-eye".
 
