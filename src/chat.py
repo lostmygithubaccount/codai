@@ -19,7 +19,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 try:
     config = toml.load("config.toml")["chat"]
 except:
-    config = {model: "gpt-3.5-turbo-16k"}
+    config = {"model": "gpt-3.5-turbo-16k"}
 
 default_user = {
     "user": {
