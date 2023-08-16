@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 ## local imports
 from .icode import icode_run
+from .testing import testing_run
 
 # configuration
 ## load .env file
@@ -38,6 +39,14 @@ def icode():
     interactive code
     """
     icode_run()
+
+
+@app.command()
+def test():
+    """
+    test
+    """
+    testing_run()
 
 
 ## main
