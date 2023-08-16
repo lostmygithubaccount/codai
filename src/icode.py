@@ -5,6 +5,7 @@ import glob
 import toml
 import typer
 import openai
+import requests
 
 import logging as log
 
@@ -22,18 +23,17 @@ try:
 except:
     pass
 
-if not config.get("model") and not config.get("azure"):
-    config["model"] = "gpt-3.5-turbo-16k"
-else:
+if config.get("azure") == True and config.get("model") == None:
     config["model"] = "birdbrain-4-32k"
+elif config.get("azure") == False and config.get("model") == None:
+    config["model"] = "gpt-3.5-turbo-16k"
 
+openai.api_key = os.getenv("OPENAI_API_KEY")
 if config.get("azure") == True:
     openai.api_type = "azure"
     openai.api_base = "https://birdbrain.openai.azure.com/"
     openai.api_version = "2023-03-15-preview"
     openai.api_key = os.getenv("AZURE_OPENAI_API_KEY")
-else:
-    openai.api_key = os.getenv("OPENAI_API_KEY")
 
 default_user = {
     "user": {
@@ -117,7 +117,83 @@ def icode_run():
 
         elif user_input.lower().startswith("/"):
             if user_input.lower().startswith("/ls"):
-                os.system("ls -1phG -a")
+                import subprocess
+
+                process = subprocess.run(
+                    user_input[1:] + " -1phG -a",
+                    shell=True,
+                    check=True,
+                    stdout=subprocess.PIPE,
+                    universal_newlines=True,
+                )
+                console.print(process.stdout)
+
+            elif user_input.lower().startswith("/rename"):
+                try:
+                    # Split the user input into command and filenames
+                    _, old_name, new_name = user_input.split(" ", 2)
+                    # Rename the file
+                    os.rename(old_name, new_name)
+                    console.print(f"Renamed file '{old_name}' to '{new_name}'")
+                except IndexError:
+                    log.info("Please specify the old filename and the new filename.")
+                except Exception as e:
+                    log.error(f"Error while renaming file: {str(e)}")
+
+            elif user_input.lower().startswith("/wget"):
+                try:
+                    # Split the user input into command and URL
+                    _, url = user_input.split(" ", 1)
+                    # Download the file
+                    import requests
+                    from pathlib import Path
+
+                    response = requests.get(url, stream=True)
+                    filename = url.split("/")[-1]
+                    with open(Path(filename), "wb") as out_file:
+                        out_file.write(response.content)
+
+                    console.print(f"Downloaded file '{filename}' from '{url}'")
+                except IndexError:
+                    log.info("Please specify a URL.")
+                except Exception as e:
+                    log.error(f"Error while downloading file: {str(e)}")
+
+            elif user_input.lower().startswith("/cd"):
+                try:
+                    # Split the user input into command and arguments
+                    _, directory = user_input.split(" ", 1)
+                    # Change the directory
+                    os.chdir(directory)
+                    console.print(f"Changed directory to '{directory}'")
+                except IndexError:
+                    log.info("Please specify a directory.")
+                except FileNotFoundError:
+                    log.info("Directory not found.")
+                except Exception as e:
+                    log.error(f"Error while changing directory: {str(e)}")
+
+            elif user_input.lower().startswith(
+                "/tree"
+            ) or user_input.lower().startswith("/t"):
+                try:
+                    import subprocess
+
+                    # Run the 'tree' command
+                    # "/t":
+                    if user_input.lower().startswith("/t"):
+                        user_input += "ree"
+
+                    process = subprocess.run(
+                        user_input[1:] + " -I venv -I .git",
+                        shell=True,
+                        check=True,
+                        stdout=subprocess.PIPE,
+                        universal_newlines=True,
+                    )
+                    console.print(process.stdout)
+                except Exception as e:
+                    log.error(f"Error while running 'tree' command: {str(e)}")
 
             elif user_input.lower().startswith("/read"):
                 try:
