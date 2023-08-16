@@ -17,7 +17,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # load config.toml
 try:
-    config = toml.load("config.toml")["chat"]
+    config = toml.load("config.toml")["icode"]
 except:
     config = {"model": "gpt-3.5-turbo-16k"}
 
@@ -72,12 +72,12 @@ def extract_code_blocks(text):
     return code_blocks
 
 
-# chat
-def chat_run():
+# icode
+def icode_run():
     codai(end="")
     console.print(help_message)
 
-    # Chat history
+    # history
     messages = []
     messages.append({"role": "user", "content": system})
 

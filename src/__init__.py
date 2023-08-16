@@ -1,1 +1,1 @@
-from .main import chat
+from .main import icode

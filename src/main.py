@@ -7,7 +7,7 @@ import typer
 from dotenv import load_dotenv
 
 ## local imports
-from .chat import chat_run
+from .icode import icode_run
 
 # configuration
 ## load .env file
@@ -33,11 +33,11 @@ def version(value: bool):
 
 # subcommands
 @app.command()
-def chat():
+def icode():
     """
-    chat to code
+    interactive code
     """
-    chat_run()
+    icode_run()
 
 
 ## main
