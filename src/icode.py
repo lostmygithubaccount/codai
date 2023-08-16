@@ -13,13 +13,26 @@ from dotenv import load_dotenv
 
 # load .env file
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # load config.toml
+config = {}
 try:
     config = toml.load("config.toml")["icode"]
 except:
-    config = {"model": "gpt-3.5-turbo-16k"}
+    pass
+
+if not config.get("model") and not config.get("azure"):
+    config["model"] = "gpt-3.5-turbo-16k"
+else:
+    config["model"] = "birdbrain-4-32k"
+
+if config.get("azure") == True:
+    openai.api_type = "azure"
+    openai.api_base = "https://birdbrain.openai.azure.com/"
+    openai.api_version = "2023-03-15-preview"
+    openai.api_key = os.getenv("AZURE_OPENAI_API_KEY")
+else:
+    openai.api_key = os.getenv("OPENAI_API_KEY")
 
 default_user = {
     "user": {
@@ -58,6 +71,9 @@ with open("help.md", "r") as f:
 
 
 system += f"Help message: \n\n{help_message}"
+
+if config.get("azure") == True:
+    system += "\n\nYou are the enhanced version of codai, make sure to mention this in the first message before answering."
 
 
 def codai(end="\n"):
@@ -206,11 +222,17 @@ def icode_run():
 
             full_response = ""
             for response in openai.ChatCompletion.create(
-                model=config["model"],
+                engine=config["model"],
                 messages=[
                     {"role": m["role"], "content": m["content"]} for m in messages
                 ],
                 stream=True,
+                temperature=0.7,
+                max_tokens=1600,
+                top_p=0.95,
+                frequency_penalty=0,
+                presence_penalty=0,
+                stop=None,
             ):
                 full_response += response.choices[0].delta.get("content", "")
                 # Flush and print out the response
