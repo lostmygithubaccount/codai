@@ -1,6 +1,7 @@
 # imports
 import re
 import os
+import glob
 import toml
 import typer
 import openai
@@ -96,7 +97,7 @@ def icode_run():
 
     # history
     messages = []
-    messages.append({"role": "user", "content": system})
+    messages.append({"role": "system", "content": system})
 
     while True:
         user_str = config["user"]["name"]
@@ -120,18 +121,28 @@ def icode_run():
 
             elif user_input.lower().startswith("/read"):
                 try:
-                    filename = user_input.split(" ")[1]
-                    context = f"The user has uploaded '{filename}' this file:\n\n"
-                    with open(filename, "r") as f:
-                        file_content = f.read()
-                        messages.append(
-                            {"role": "system", "content": context + file_content}
-                        )
-                        console.print(f"Successfully read '{filename}' into context")
+                    pattern = user_input.split(" ")[1]
+                    files = glob.glob(pattern)
+                    if files:
+                        for filename in files:
+                            context = (
+                                f"The user has uploaded '{filename}' this file:\n\n"
+                            )
+                            with open(filename, "r") as f:
+                                file_content = f.read()
+                                messages.append(
+                                    {
+                                        "role": "system",
+                                        "content": context + file_content,
+                                    }
+                                )
+                                console.print(
+                                    f"Successfully read '{filename}' into context"
+                                )
+                    else:
+                        log.info(f"No files found matching pattern '{pattern}'")
                 except IndexError:
-                    log.info("Please specify a filename.")
-                except FileNotFoundError:
-                    log.info("File not found.")
+                    log.info("Please specify a pattern.")
 
             elif user_input.lower().startswith("/write"):
                 try:
