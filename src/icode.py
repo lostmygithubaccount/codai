@@ -73,6 +73,7 @@ with open("help.md", "r") as f:
 system += f"Help message: \n\n{help_message}"
 
 if config.get("azure") == True:
+    log.info("Using extra cloud power...")
     system += "\n\nYou are the enhanced version of codai, make sure to mention this in the first message before answering."
 
 
