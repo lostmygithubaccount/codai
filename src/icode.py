@@ -14,8 +14,8 @@ from rich.console import Console
 from dotenv import load_dotenv
 
 # load .env file
-load_dotenv()
 
+load_dotenv()
 # load config.toml
 config = {}
 try:
@@ -177,12 +177,12 @@ def icode_run():
                 "/tree"
             ) or user_input.lower().startswith("/t"):
                 try:
+                    # Run the 'tree' command
                     import subprocess
 
-                    # Run the 'tree' command
                     # "/t":
-                    if user_input.lower().startswith("/t"):
-                        user_input += "ree"
+                    if user_input.lower().startswith("/t "):
+                        user_input = user_input.replace("/t", "/tree")
 
                     process = subprocess.run(
                         user_input[1:] + " -I venv -I .git",
@@ -316,7 +316,7 @@ def icode_run():
                 ],
                 stream=True,
                 temperature=0.7,
-                max_tokens=1600,
+                max_tokens=10000,
                 top_p=0.95,
                 frequency_penalty=0,
                 presence_penalty=0,
