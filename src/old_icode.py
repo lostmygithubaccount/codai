@@ -56,26 +56,9 @@ log.basicConfig(level=log.INFO)
 console = Console()
 
 # Prompt engineering
-system = f"""
-Hello, I am user: {config["user"]}
-"""
-
-# read in system message from 'system.md'
-with open("system.md", "r") as f:
-    system_message = f.read()
-
-system += f"\n{system_message}"
-
-
-with open("help.md", "r") as f:
-    help_message = f.read()
-
-
+system = "do nothing"
+help_message = "yolo"
 system += f"Help message: \n\n{help_message}"
-
-if config.get("azure") == True:
-    log.info("Using extra cloud power...")
-    system += "\n\nYou are the enhanced version of codai, make sure to mention this in the first message before answering."
 
 
 def codai(end="\n"):

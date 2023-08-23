@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "codai"
-version = "0.0.11"
+version = "0.0.13"
 authors = [
   { name="Cody", email="cody@dkdc.dev" },
 ]
@@ -21,7 +21,7 @@ dependencies = [
   'typer[all]',
   'requests',
   'openai',
-  'langchain',
+  'marvin',
   'ibis-framework[duckdb,polars,deltalake]',
   'plotly',
   'streamlit',

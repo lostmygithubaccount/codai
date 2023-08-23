@@ -1,4 +1,4 @@
 # codai
 
-AI coding assistant. Pronounced "code-eye".
+AI coding assistant. Pronounced "code-eye"?
 
